@@ -1,0 +1,350 @@
+:root {
+  --bg-gradient-start: #0f172a;
+  --bg-gradient-end: #1e1b4b;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --accent-color: #6366f1;
+  --accent-hover: #4f46e5;
+  --board-bg: rgba(0, 0, 0, 0.6);
+  --board-grid: rgba(255, 255, 255, 0.05);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+#app {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  /* Align to the top */
+  width: 100%;
+  padding: 1rem 1rem 0 1rem;
+  /* Remove bottom padding */
+  height: 100vh;
+  /* Enforce full viewport height */
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 0;
+}
+
+.game-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  /* Remove bottom padding inside the glass panel */
+  gap: 1.5rem;
+  max-width: 900px;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.board-container {
+  position: relative;
+  background: var(--board-bg);
+  border: 2px solid var(--glass-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+  width: max-content;
+  height: max-content;
+}
+
+/* Background grid for the canvas */
+#game-canvas {
+  display: block;
+  touch-action: none;
+  background-image:
+    linear-gradient(var(--board-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--board-grid) 1px, transparent 1px);
+  background-size: 20px 20px;
+  /* Assuming 20px blocks */
+}
+
+/* Overlays (Game Over / Pause) */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+}
+
+.overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.overlay h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(to right, #ff7b00, #ff0055);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.overlay p {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  color: var(--text-secondary);
+}
+
+#final-score {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+#resume-btn,
+#restart-btn {
+  width: auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+/* Side Panel */
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 150px;
+}
+
+.stats-box {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.next-canvas-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+#next-canvas {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  display: block;
+  width: 100%;
+  max-width: 120px;
+  height: auto;
+  aspect-ratio: 1;
+}
+
+/* Buttons */
+.glass-button {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.glass-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.glass-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.glass-button.primary {
+  background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+  border: none;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+}
+
+.glass-button.primary:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+}
+
+.glass-button.outline {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Controls Hint */
+.controls-hint {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.controls-hint p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.controls-hint span {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Mobile Controls - Hidden by default on desktop */
+.mobile-controls {
+  display: none;
+  width: 100%;
+  gap: 1rem;
+  margin-top: 1rem;
+  justify-content: space-between;
+}
+
+.control-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.control-btn {
+  font-size: 1.5rem;
+  padding: 0.5rem 1rem;
+  min-width: 60px;
+}
+
+.control-btn.action-btn {
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  body {
+    overflow-y: auto;
+    align-items: flex-start;
+  }
+
+  #app {
+    padding-top: 1rem;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .game-wrapper {
+    padding: 1rem;
+    gap: 1rem;
+    align-items: center;
+    border-radius: 0;
+    border: none;
+    width: 100vw;
+  }
+
+  .main-content {
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .side-panel {
+    width: 110px;
+    gap: 0.75rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+  }
+
+  .stats-box {
+    padding: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+  }
+
+  .glass-button {
+    padding: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .controls-hint {
+    display: none;
+  }
+
+  .mobile-controls {
+    display: flex;
+  }
+}
