@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Block Dropper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="/assets/index-CvfO28zz.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-x8dr_ews.css">
+</head>
+
+<body>
+  <div id="app">
+    <div class="game-wrapper glass-panel">
+      <div class="main-content">
+        <div class="board-container">
+          <canvas id="game-canvas" width="200" height="400"></canvas>
+          <div id="game-over-screen" class="overlay hidden">
+            <h2>GAME OVER</h2>
+            <p>Final Score: <span id="final-score">0</span></p>
+            <button id="restart-btn" class="glass-button primary">PLAY AGAIN</button>
+          </div>
+          <div id="pause-screen" class="overlay hidden">
+            <h2>PAUSED</h2>
+            <button id="resume-btn" class="glass-button">RESUME</button>
+          </div>
+        </div>
+
+        <div class="side-panel">
+          <div class="stats-box">
+            <div class="stat-label">SCORE</div>
+            <div id="score" class="stat-value">0</div>
+          </div>
+
+          <div class="stats-box">
+            <div class="stat-label">LEVEL</div>
+            <div id="level" class="stat-value">1</div>
+          </div>
+
+          <div class="stats-box">
+            <div class="stat-label">NEXT</div>
+            <div class="next-canvas-wrapper">
+              <canvas id="next-canvas" width="120" height="120"></canvas>
+            </div>
+          </div>
+
+          <button id="start-btn" class="glass-button primary">START GAME</button>
+
+          <div class="controls-hint">
+            <p><span>← →</span> Move</p>
+            <p><span>↑</span> Rotate</p>
+            <p><span>↓</span> Drop</p>
+            <p><span>Space</span> Hard Drop</p>
+            <p><span>P</span> Pause</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mobile-controls">
+        <div class="control-row d-pad">
+          <button id="btn-left" class="glass-button control-btn">◀</button>
+          <button id="btn-down" class="glass-button control-btn">▼</button>
+          <button id="btn-right" class="glass-button control-btn">▶</button>
+        </div>
+        <div class="control-row action-pad">
+          <button id="btn-rotate" class="glass-button control-btn action-btn">↻</button>
+          <button id="btn-drop" class="glass-button control-btn action-btn">DROP</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
