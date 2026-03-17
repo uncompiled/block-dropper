@@ -15,16 +15,29 @@ export class Renderer {
 
   draw(game: Game) {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-    
+
     this.drawBoard(game.board.grid);
-    
-    // Draw ghost piece (optional feature, maybe implementing later)
-    
-    if (!game.isGameOver) {
+
+    if (game.clearAnim !== null) {
+      this.drawWipeOverlay(game.clearAnim);
+    } else if (!game.isGameOver) {
+      // Draw ghost piece (optional feature, maybe implementing later)
       this.drawPiece(this.ctx, game.currentPiece.shape, game.currentPiece.x, game.currentPiece.y, game.currentPiece.color);
     }
 
     this.drawNextPiece(game.nextPiece.shape, game.nextPiece.color);
+  }
+
+  private drawWipeOverlay(anim: { rows: number[]; startTime: number; duration: number }) {
+    const progress = Math.min(1, (performance.now() - anim.startTime) / anim.duration);
+    const erasedFromEachSide = Math.floor(progress * (COLS / 2));
+    for (const row of anim.rows) {
+      for (let col = 0; col < COLS; col++) {
+        if (Math.floor(Math.abs(col - 4.5)) < erasedFromEachSide) {
+          this.ctx.clearRect(col * this.blockSize, row * this.blockSize, this.blockSize, this.blockSize);
+        }
+      }
+    }
   }
 
   drawBoard(grid: (string | null)[][]) {

@@ -50,6 +50,13 @@ const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
     const deltaTime = time - lastTime;
     lastTime = time;
 
+    if (game.clearAnim !== null) {
+      game.tickClearAnim(time);
+      renderer.draw(game);
+      animationId = requestAnimationFrame(update);
+      return;
+    }
+
     dropCounter += deltaTime;
     if (dropCounter > dropInterval) {
       game.dropPiece();
