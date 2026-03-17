@@ -59,6 +59,15 @@ export class Board {
     }
   }
 
+  // Return indices of full rows without mutating the grid
+  getFullRows(): number[] {
+    const full: number[] = [];
+    for (let y = ROWS - 1; y >= 0; y--) {
+      if (this.grid[y].every(cell => cell !== null)) full.push(y);
+    }
+    return full;
+  }
+
   // Clear full lines and return number of lines cleared
   clearLines(): number {
     let linesCleared = 0;
