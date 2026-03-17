@@ -21,11 +21,23 @@ export class Renderer {
     if (game.clearAnim !== null) {
       this.drawWipeOverlay(game.clearAnim);
     } else if (!game.isGameOver) {
-      // Draw ghost piece (optional feature, maybe implementing later)
+      const ghostY = this.getGhostY(game);
+      if (ghostY !== game.currentPiece.y) {
+        this.drawPiece(this.ctx, game.currentPiece.shape, game.currentPiece.x, ghostY, 'rgba(255, 255, 255, 0.2)');
+      }
       this.drawPiece(this.ctx, game.currentPiece.shape, game.currentPiece.x, game.currentPiece.y, game.currentPiece.color);
     }
 
     this.drawNextPiece(game.nextPiece.shape, game.nextPiece.color);
+  }
+
+  private getGhostY(game: Game): number {
+    const { currentPiece, board } = game;
+    let ghostY = currentPiece.y;
+    while (board.isValidMove(currentPiece, currentPiece.x, ghostY + 1)) {
+      ghostY++;
+    }
+    return ghostY;
   }
 
   private drawWipeOverlay(anim: { rows: number[]; startTime: number; duration: number }) {
