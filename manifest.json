@@ -1,6 +1,6 @@
 {
-  "name": "Block Dropper",
-  "short_name": "Block Dropper",
+  "name": "BlockDrop",
+  "short_name": "BlockDrop",
   "description": "A classic block-dropping puzzle game",
   "start_url": "./",
   "display": "standalone",
