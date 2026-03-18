@@ -13,8 +13,6 @@ const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
   
   const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
   const restartBtn = document.getElementById('restart-btn') as HTMLButtonElement;
-  const resumeBtn = document.getElementById('resume-btn') as HTMLButtonElement;
-  
   const gameOverScreen = document.getElementById('game-over-screen')!;
   const pauseScreen = document.getElementById('pause-screen')!;
 
@@ -109,7 +107,6 @@ const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
     startBtn.blur();
   });
   restartBtn.addEventListener('click', startGame);
-  resumeBtn.addEventListener('click', togglePause);
 
   // Mobile Touch Controls
   const setupControlBtn = (id: string, action: () => void) => {
