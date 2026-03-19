@@ -180,11 +180,31 @@ const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
   setupControlBtn('btn-rotate', () => game.rotatePiece());
   setupControlBtn('btn-drop', () => { game.hardDrop(); dropCounter = 0; });
 
-  // Rotate on canvas tap
+  // Swipe/tap controls on canvas
+  let swipeStartX = 0;
+  let swipeStartY = 0;
+  const SWIPE_THRESHOLD = 30;
+
   canvas.addEventListener('pointerdown', (e) => {
     e.preventDefault();
+    swipeStartX = e.clientX;
+    swipeStartY = e.clientY;
+  });
+
+  canvas.addEventListener('pointerup', (e) => {
     if (game.isPaused || game.isGameOver || startBtn.textContent === 'START GAME') return;
-    game.rotatePiece();
+    const dx = e.clientX - swipeStartX;
+    const dy = e.clientY - swipeStartY;
+
+    if (Math.abs(dx) < SWIPE_THRESHOLD && Math.abs(dy) < SWIPE_THRESHOLD) {
+      game.rotatePiece();
+    } else if (Math.abs(dx) >= Math.abs(dy)) {
+      game.movePiece(dx < 0 ? -1 : 1, 0);
+    } else if (dy > 0) {
+      game.hardDrop();
+      dropCounter = 0;
+    }
+
     renderer.draw(game);
   });
 
