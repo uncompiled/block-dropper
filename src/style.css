@@ -24,20 +24,17 @@ body {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  overflow: hidden;
+  align-items: flex-start;
+  overflow-y: auto;
 }
 
 #app {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  /* Align to the top */
+  flex-direction: column;
+  align-items: center;
   width: 100%;
-  padding: 1rem 1rem 0 1rem;
-  /* Remove bottom padding */
-  height: 100vh;
-  /* Enforce full viewport height */
+  padding: 1rem 1rem 2rem 1rem;
+  min-height: 100vh;
 }
 
 .glass-panel {
@@ -137,6 +134,23 @@ body {
   width: auto;
   padding-left: 2rem;
   padding-right: 2rem;
+}
+
+#save-score-btn {
+  margin-top: 0.75rem;
+  width: auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.save-msg {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  color: var(--accent-color);
+}
+
+.save-msg.error {
+  color: #ff0055;
 }
 
 /* Side Panel */
@@ -283,6 +297,68 @@ body {
   text-transform: uppercase;
 }
 
+/* Scoreboard */
+.scoreboard {
+  width: 100%;
+  max-width: 900px;
+  margin-top: 1.5rem;
+  padding: 1.5rem 2rem;
+}
+
+.scoreboard-title {
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.scoreboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.scoreboard-table th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  text-align: left;
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid var(--glass-border);
+  text-transform: uppercase;
+}
+
+.scoreboard-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--glass-border);
+  color: var(--text-primary);
+}
+
+.scoreboard-table td.rank {
+  font-weight: 800;
+  color: var(--accent-color);
+  width: 2rem;
+}
+
+.scoreboard-table td.score-value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.scoreboard-table td.date {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.score-row.empty td {
+  color: var(--text-secondary);
+  opacity: 0.4;
+}
+
 @media (max-width: 768px) {
   body {
     overflow-y: auto;
@@ -345,5 +421,16 @@ body {
 
   .mobile-controls {
     display: flex;
+  }
+
+  .scoreboard {
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .scoreboard-table th,
+  .scoreboard-table td {
+    padding: 0.4rem;
+    font-size: 0.8rem;
   }
 }

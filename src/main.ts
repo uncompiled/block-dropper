@@ -1,6 +1,8 @@
 import './style.css';
 import { Game } from './game';
 import { Renderer } from './renderer';
+import { initializeGSI, triggerSignIn } from './auth';
+import { openDB, qualifiesForTop, saveScore, refreshScoreboard } from './scoreboard';
 
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
   const nextCanvas = document.getElementById('next-canvas') as HTMLCanvasElement;
@@ -10,9 +12,11 @@ const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
   const scoreEl = document.getElementById('score')!;
   const levelEl = document.getElementById('level')!;
   const finalScoreEl = document.getElementById('final-score')!;
-  
+
   const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
   const restartBtn = document.getElementById('restart-btn') as HTMLButtonElement;
+  const saveScoreBtn = document.getElementById('save-score-btn') as HTMLButtonElement;
+  const saveScoreMsg = document.getElementById('save-score-msg')!;
   const gameOverScreen = document.getElementById('game-over-screen')!;
   const pauseScreen = document.getElementById('pause-screen')!;
 
@@ -23,6 +27,21 @@ const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
   let lastTime = 0;
   let dropCounter = 0;
   let dropInterval = 1000; // ms
+
+  // Eagerly open the DB so the first game-over check is fast
+  const dbPromise = openDB();
+
+  // Initialize Google Sign-In (guard against async script race)
+  function tryInitGSI() {
+    if (window.google?.accounts?.id) {
+      initializeGSI();
+    }
+  }
+  tryInitGSI();
+  document.getElementById('gsi-script')?.addEventListener('load', tryInitGSI);
+
+  // Render scoreboard on page load
+  dbPromise.then(() => refreshScoreboard(3)).catch(() => { /* IndexedDB unavailable */ });
 
   function updateLevelSpeed() {
     // Speed up as level increases
@@ -40,7 +59,38 @@ const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
     finalScoreEl.textContent = finalScore.toString();
     gameOverScreen.classList.remove('hidden');
     startBtn.textContent = 'START GAME';
+
+    // Reset save UI
+    saveScoreBtn.classList.add('hidden');
+    saveScoreBtn.disabled = false;
+    saveScoreMsg.classList.add('hidden');
+    saveScoreMsg.textContent = '';
+
+    // Check if the score qualifies for top 3
+    qualifiesForTop(finalScore, 3).then((qualifies) => {
+      if (qualifies) saveScoreBtn.classList.remove('hidden');
+    }).catch(() => { /* ignore DB errors */ });
   };
+
+  saveScoreBtn.addEventListener('click', () => {
+    saveScoreBtn.disabled = true;
+    saveScoreMsg.classList.remove('hidden', 'error');
+    saveScoreMsg.textContent = 'Signing in...';
+
+    triggerSignIn().then((user) => {
+      saveScoreMsg.textContent = 'Saving...';
+      const score = parseInt(finalScoreEl.textContent ?? '0', 10);
+      return saveScore({ username: user.name, email: user.email, score, date: new Date().toISOString() });
+    }).then(() => {
+      saveScoreBtn.classList.add('hidden');
+      saveScoreMsg.textContent = 'Score saved!';
+      return refreshScoreboard(3);
+    }).catch((err: unknown) => {
+      saveScoreMsg.classList.add('error');
+      saveScoreMsg.textContent = err instanceof Error ? err.message : 'Sign-in failed.';
+      saveScoreBtn.disabled = false;
+    });
+  });
 
   function update(time = 0) {
     if (game.isPaused || game.isGameOver) return;
@@ -70,18 +120,22 @@ const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
     updateLevelSpeed();
     gameOverScreen.classList.add('hidden');
     pauseScreen.classList.add('hidden');
+    saveScoreBtn.classList.add('hidden');
+    saveScoreBtn.disabled = false;
+    saveScoreMsg.classList.add('hidden');
+    saveScoreMsg.textContent = '';
     startBtn.textContent = 'PAUSE';
-    
+
     lastTime = performance.now();
     dropCounter = 0;
-    
+
     cancelAnimationFrame(animationId);
     animationId = requestAnimationFrame(update);
   }
 
   function togglePause() {
     if (game.isGameOver) return;
-    
+
     if (game.isPaused) {
       game.play();
       pauseScreen.classList.add('hidden');
@@ -93,7 +147,7 @@ const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
       pauseScreen.classList.remove('hidden');
       startBtn.textContent = 'RESUME';
       cancelAnimationFrame(animationId);
-      // Redraw one last time in case they rotate and then immediately pause, 
+      // Redraw one last time in case they rotate and then immediately pause,
       // but renderer already reflects it so we don't necessarily have to.
     }
   }
@@ -146,9 +200,9 @@ const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
     }
 
     if (game.isPaused || game.isGameOver) return;
-    
+
     // Check if the game has started by looking at startBtn textContent
-    if (startBtn.textContent === 'START GAME') return; 
+    if (startBtn.textContent === 'START GAME') return;
 
     switch (e.key) {
       case 'ArrowLeft':
@@ -158,25 +212,27 @@ const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
         game.movePiece(1, 0);
         break;
       case 'ArrowDown':
+        e.preventDefault();
         game.dropPiece();
         dropCounter = 0; // reset counter when manually dropping
         break;
       case 'ArrowUp':
+        e.preventDefault();
         game.rotatePiece();
         break;
       case ' ':
       case 'Spacebar':
+        e.preventDefault();
         game.hardDrop();
         dropCounter = 0;
         break;
       default:
         return; // do not force draw if key doesn't matter
     }
-    
+
     // force draw immediately to make controls feel responsive
-    renderer.draw(game); 
+    renderer.draw(game);
   });
 
   // Initial draw before start
   renderer.draw(game);
-

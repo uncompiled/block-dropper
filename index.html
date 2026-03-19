@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <script id="gsi-script" async src="https://accounts.google.com/gsi/client"></script>
 </head>
 
 <body>
@@ -22,6 +23,8 @@
             <h2>GAME OVER</h2>
             <p>Final Score: <span id="final-score">0</span></p>
             <button id="restart-btn" class="glass-button primary">PLAY AGAIN</button>
+            <button id="save-score-btn" class="glass-button outline hidden">SAVE SCORE</button>
+            <p id="save-score-msg" class="save-msg hidden"></p>
           </div>
           <div id="pause-screen" class="overlay hidden">
             <h2>PAUSED</h2>
@@ -70,6 +73,21 @@
         </div>
       </div>
     </div>
+
+    <section id="scoreboard" class="scoreboard glass-panel">
+      <h3 class="scoreboard-title">HIGH SCORES</h3>
+      <table class="scoreboard-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Player</th>
+            <th>Score</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="scoreboard-list"></tbody>
+      </table>
+    </section>
   </div>
   <script type="module" src="/src/main.ts"></script>
   <script>
