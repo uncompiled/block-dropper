@@ -1,6 +1,7 @@
 import './style.css';
 import { Game } from './game';
 import { Renderer } from './renderer';
+import { COLS } from './board';
 import { initializeGSI, triggerSignIn } from './auth';
 import { openDB, qualifiesForTop, saveScore, refreshScoreboard } from './scoreboard';
 
@@ -199,7 +200,11 @@ const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
     if (Math.abs(dx) < SWIPE_THRESHOLD && Math.abs(dy) < SWIPE_THRESHOLD) {
       game.rotatePiece();
     } else if (Math.abs(dx) >= Math.abs(dy)) {
-      game.movePiece(dx < 0 ? -1 : 1, 0);
+      const direction = dx < 0 ? -1 : 1;
+      const cellsToMove = Math.round(Math.abs(dx) / (window.innerWidth / COLS));
+      for (let i = 0; i < cellsToMove; i++) {
+        if (!game.movePiece(direction, 0)) break;
+      }
     } else if (dy > 0) {
       game.hardDrop();
       dropCounter = 0;
