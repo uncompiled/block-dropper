@@ -69,7 +69,7 @@ const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
 
     // Check if the score qualifies for top 3 (only show save button when online)
     qualifiesForTop(finalScore, 3).then((qualifies) => {
-      if (qualifies && navigator.onLine) saveScoreBtn.classList.remove('hidden');
+      if (qualifies && finalScore > 0 && navigator.onLine) saveScoreBtn.classList.remove('hidden');
     }).catch(() => { /* ignore DB errors */ });
   };
 
