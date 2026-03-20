@@ -2,7 +2,7 @@ import './style.css';
 import { Game } from './game';
 import { Renderer } from './renderer';
 import { COLS } from './board';
-import { initializeGSI, triggerSignIn } from './auth';
+import { initializeGSI, triggerSignIn, getStoredUser, clearStoredUser } from './auth';
 import { openDB, qualifiesForTop, saveScore, refreshScoreboard } from './scoreboard';
 
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
@@ -18,6 +18,7 @@ const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
   const restartBtn = document.getElementById('restart-btn') as HTMLButtonElement;
   const saveScoreBtn = document.getElementById('save-score-btn') as HTMLButtonElement;
   const saveScoreMsg = document.getElementById('save-score-msg')!;
+  const logoutBtn = document.getElementById('logout-btn') as HTMLButtonElement;
   const gameOverScreen = document.getElementById('game-over-screen')!;
   const pauseScreen = document.getElementById('pause-screen')!;
 
@@ -40,6 +41,14 @@ const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
   }
   tryInitGSI();
   document.getElementById('gsi-script')?.addEventListener('load', tryInitGSI);
+
+  // Show logout button if user is already signed in
+  if (getStoredUser()) logoutBtn.classList.remove('hidden');
+
+  logoutBtn.addEventListener('click', () => {
+    clearStoredUser();
+    logoutBtn.classList.add('hidden');
+  });
 
   // Render scoreboard on page load
   dbPromise.then(() => refreshScoreboard(3)).catch(() => { /* IndexedDB unavailable */ });

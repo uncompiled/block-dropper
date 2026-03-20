@@ -30,6 +30,25 @@ interface PromptMoment {
   isSkippedMoment(): boolean;
 }
 
+const LS_NAME_KEY = 'block-dropper:name';
+const LS_EMAIL_KEY = 'block-dropper:email';
+
+export function getStoredUser(): { name: string; email: string } | null {
+  const name = localStorage.getItem(LS_NAME_KEY);
+  const email = localStorage.getItem(LS_EMAIL_KEY);
+  return name && email ? { name, email } : null;
+}
+
+export function storeUser(user: { name: string; email: string }): void {
+  localStorage.setItem(LS_NAME_KEY, user.name);
+  localStorage.setItem(LS_EMAIL_KEY, user.email);
+}
+
+export function clearStoredUser(): void {
+  localStorage.removeItem(LS_NAME_KEY);
+  localStorage.removeItem(LS_EMAIL_KEY);
+}
+
 // Single-shot Promise channel between initialize()'s callback and triggerSignIn()
 let resolveSignIn: ((user: { name: string; email: string }) => void) | null = null;
 let rejectSignIn: ((reason: Error) => void) | null = null;
@@ -53,6 +72,7 @@ function handleCredentialResponse(response: CredentialResponse): void {
   if (!resolveSignIn) return;
   try {
     const user = decodeJwtPayload(response.credential);
+    storeUser(user);
     resolveSignIn(user);
   } catch (err) {
     rejectSignIn?.(err instanceof Error ? err : new Error(String(err)));
@@ -73,6 +93,9 @@ function decodeJwtPayload(jwt: string): { name: string; email: string } {
 }
 
 export function triggerSignIn(): Promise<{ name: string; email: string }> {
+  const cached = getStoredUser();
+  if (cached) return Promise.resolve(cached);
+
   return new Promise((resolve, reject) => {
     resolveSignIn = resolve;
     rejectSignIn = reject;
