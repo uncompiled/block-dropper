@@ -67,11 +67,24 @@ const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
     saveScoreMsg.classList.add('hidden');
     saveScoreMsg.textContent = '';
 
-    // Check if the score qualifies for top 3
+    // Check if the score qualifies for top 3 (only show save button when online)
     qualifiesForTop(finalScore, 3).then((qualifies) => {
-      if (qualifies) saveScoreBtn.classList.remove('hidden');
+      if (qualifies && navigator.onLine) saveScoreBtn.classList.remove('hidden');
     }).catch(() => { /* ignore DB errors */ });
   };
+
+  // Hide/show save button based on connectivity while game-over screen is visible
+  window.addEventListener('offline', () => {
+    saveScoreBtn.classList.add('hidden');
+  });
+  window.addEventListener('online', () => {
+    if (!gameOverScreen.classList.contains('hidden') && !saveScoreBtn.disabled) {
+      const score = parseInt(finalScoreEl.textContent ?? '0', 10);
+      qualifiesForTop(score, 3).then((qualifies) => {
+        if (qualifies) saveScoreBtn.classList.remove('hidden');
+      }).catch(() => { /* ignore DB errors */ });
+    }
+  });
 
   saveScoreBtn.addEventListener('click', () => {
     saveScoreBtn.disabled = true;
