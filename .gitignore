@@ -25,3 +25,6 @@ settings.local.json
 *.njsproj
 *.sln
 *.sw?
+
+AWS Amplify artifacts
+.amplify
