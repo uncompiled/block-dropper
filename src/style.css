@@ -441,3 +441,124 @@ body {
     font-size: 0.8rem;
   }
 }
+
+@media (orientation: landscape) and (max-height: 500px) {
+  body {
+    overflow: hidden;
+  }
+
+  #app {
+    padding: 0;
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  .game-wrapper {
+    padding: 0;
+    flex-direction: row;
+    width: 100vw;
+    height: 100svh;
+    max-width: none;
+    gap: 0;
+    border-radius: 0;
+    border: none;
+    align-items: stretch;
+  }
+
+  .main-content {
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .board-container {
+    flex: 0 0 auto;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  #game-canvas {
+    height: 100svh;
+    width: auto;
+  }
+
+  /* Side panel becomes a compact fixed overlay in the top-right corner */
+  .side-panel {
+    position: fixed;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 130px;
+    flex-direction: column;
+    gap: 0.4rem;
+    justify-content: flex-start;
+    align-items: stretch;
+    max-height: calc(100svh - 5rem);
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 0.4rem;
+    z-index: 50;
+  }
+
+  .stats-box {
+    padding: 0.4rem;
+  }
+
+  .stat-value {
+    font-size: 1.1rem;
+  }
+
+  .side-panel .glass-button {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  /* Move start button to top of side panel overlay */
+  #start-btn {
+    order: -1;
+  }
+
+  /* Constrain the next-piece canvas to save vertical space */
+  #next-canvas {
+    max-width: 70px;
+  }
+
+  .mobile-controls {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.5rem 1rem;
+    margin: 0;
+    justify-content: space-between;
+    background: transparent;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .mobile-controls .control-row {
+    pointer-events: all;
+  }
+
+  .control-btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 1.25rem;
+    min-width: 50px;
+  }
+
+  .controls-hint {
+    display: none;
+  }
+
+  #scoreboard {
+    display: none;
+  }
+}
