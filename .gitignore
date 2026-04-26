@@ -28,5 +28,3 @@ settings.local.json
 
 AWS Amplify artifacts
 .amplify
-
-.playwright-mcp/
