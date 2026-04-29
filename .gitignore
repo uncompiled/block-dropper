@@ -26,5 +26,8 @@ settings.local.json
 *.sln
 *.sw?
 
-AWS Amplify artifacts
+# AWS Amplify artifacts
 .amplify
+
+# MCP artifacts
+.playwright-mcp/
